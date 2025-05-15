@@ -1,0 +1,424 @@
+:root {
+  --primary-color: #6c5ce7;
+  --secondary-color: #00cec9;
+  --accent-color: #fd79a8;
+  --background-color: #1a1a2e;
+  --text-color: #e0e0e0;
+  --card-bg: #16213e;
+  --shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Poppins", sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.game-container {
+  display: flex;
+  max-width: 1200px;
+  width: 95%;
+  height: 100%;
+  background-color: var(--card-bg);
+  border-radius: 30px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  position: relative;
+}
+
+.sidebar {
+  width: 300px;
+  background-color: rgba(108, 92, 231, 0.1);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  z-index: 1;
+}
+
+h1 {
+  font-size: 2rem;
+  color: var(--accent-color);
+  margin-bottom: 2rem;
+  text-align: center;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.info-section {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 15px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  color: var(--text-color);
+  margin-bottom: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-item {
+  font-size: 0.9rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.info-item span {
+  font-weight: 600;
+  color: var(--secondary-color);
+}
+
+.controls-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+button,
+.file-input-wrapper,
+#levelSelect {
+  width: 100%;
+  padding: 0.8rem;
+  font-size: 0.9rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-color);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+  outline: none;
+}
+
+button:hover,
+.file-input-wrapper:hover,
+#levelSelect:hover {
+  background-color: var(--secondary-color);
+  color: var(--background-color);
+  text-transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 206, 201, 0.4);
+}
+
+#levelSelect {
+  appearance: none;
+  background: linear-gradient(
+    to right,
+    var(--primary-color),
+    var(--secondary-color)
+  );
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+#levelSelect {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+  background-size: 1.2em;
+  padding-right: 3rem;
+}
+
+#levelSelect:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.5);
+  animation: pulse 1.5s infinite;
+}
+
+#levelSelect:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(108, 92, 231, 0.4);
+}
+
+#levelSelect option {
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  padding: 1rem;
+  font-weight: 400;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(108, 92, 231, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(108, 92, 231, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(108, 92, 231, 0);
+  }
+}
+
+.button-group {
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.mode-btn:first-child {
+  margin-bottom: 5px;
+}
+
+.mode-btn.active {
+  background-color: var(--accent-color);
+}
+
+.file-input-wrapper {
+  display: inline-block;
+  text-align: center;
+}
+
+#fileInput {
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.puzzle-section {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  position: relative;
+}
+
+#sliceContainer {
+  display: grid;
+  gap: 4px;
+  max-width: 100%;
+  max-height: 100%;
+  aspect-ratio: 1;
+  background-color: rgba(255, 255, 255, 0.05);
+  padding: 4px;
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  position: relative;
+  z-index: 1;
+}
+
+.slice {
+  aspect-ratio: 1;
+  background-color: var(--card-bg);
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.3s ease;
+  cursor: pointer;
+  border-radius: 0px;
+  overflow: hidden;
+  position: relative;
+}
+
+.slice img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: all 0.3s ease;
+}
+
+.slice.blank {
+  background-color: #f0f0f0;
+  visibility: hidden; /* Makes the blank space invisible */
+}
+
+.slice.slide-anim {
+  animation: bounceTile 0.3s ease-in-out;
+}
+
+@keyframes bounceTile {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.01);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.slice:hover {
+  transform: scale(1.05) rotate(2deg);
+  z-index: 10;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  outline: 2px solid #4caf50;
+  cursor: pointer;
+}
+
+/* Selected piece styling */
+.slice.selected {
+  border: 2px solid var(--accent-color);
+  transform: scale(1.1);
+  z-index: 20;
+  box-shadow: 0 0 20px rgba(253, 121, 168, 0.6);
+}
+
+/* Animations for swapping slices */
+.slice.swapping {
+  animation: swapAnimation 0.6s ease;
+}
+
+@keyframes swapAnimation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15) rotate(5deg);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Completion Modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(10px);
+}
+
+.modal-content {
+  background-color: var(--card-bg);
+  margin: 5% auto;
+  padding: 2rem;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 500px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  animation: modalPopUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-content img {
+  max-height: 50vh; /* 50% of screen height */
+  max-width: 90vw; /* 90% of screen width */
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border: 12px solid var(--card-bg); /* Frame effect */
+  box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.2), 0 5px 20px rgba(0, 0, 0, 0.3);
+  padding: 8px;
+  background: white;
+  box-sizing: border-box;
+}
+
+@keyframes modalPopUp {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.modal h2 {
+  color: var(--accent-color);
+  margin-bottom: 1rem;
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.modal p {
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+  color: var(--text-color);
+}
+
+.modal button {
+  padding: 1rem 2rem;
+  font-size: 1rem;
+  background-color: var(--secondary-color);
+  color: var(--background-color);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.modal button:hover {
+  background-color: #00b3b0;
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 206, 201, 0.4);
+}
+
+/* Responsive layout for smaller screens */
+@media (max-width: 768px) {
+  .game-container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  #imageContainer {
+    max-height: 50vh;
+    width: 85%;
+    padding: 1rem;
+    box-sizing: border-box;
+    align-self: center;
+  }
+
+  #imageContainer img {
+    transition: all 0.3s ease;
+  }
+
+  .sidebar {
+    width: 100%;
+    order: 2;
+  }
+
+  .puzzle-section {
+    order: 1;
+  }
+
+  .modal-content {
+    margin: 10% auto;
+    padding: 1.5rem;
+    width: 95%;
+  }
+
+  .modal-content img {
+    max-height: 55vh;
+    border-width: 8px;
+  }
+}
