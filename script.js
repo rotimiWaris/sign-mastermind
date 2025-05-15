@@ -25,6 +25,8 @@ document.getElementById("fileInput").addEventListener("change", function (e) {
   const file = e.target.files[0];
 
   if (file) {
+    document.getElementById("shareButton").style.display = "none";
+
     // Read the selected image fike
     const reader = new FileReader();
 
