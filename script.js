@@ -511,13 +511,15 @@ function stopTimer() {
 /* Update the timer display every second */
 function updateTimer() {
   seconds++;
+  const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
 
-  // Format time as MM:SS
-  document.getElementById("timer").textContent = `${minutes
-    .toString()
-    .padStart(2, "0")}:${remainingSeconds.toString().padStart(2, "0")}`;
+  // Format time as HH:MM:SS
+  document.getElementById("timer").textContent =
+    `${hours.toString().padStart(2, "0")}:` +
+    `${minutes.toString().padStart(2, "0")}:` +
+    `${remainingSeconds.toString().padStart(2, "0")}`;
 }
 
 /**
