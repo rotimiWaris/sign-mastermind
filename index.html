@@ -6,12 +6,21 @@
     <title>Puzzle Game</title>
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
     />
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
     <div class="game-container">
+      <!-- Mute/Unmute Button -->
+      <button id="muteButton" class="mute-button" aria-label="Toggle sound">
+        <svg id="muteIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+        </svg>
+      </button>
+
       <div class="sidebar">
         <h1>Sign Mastermind</h1>
         <div id="imageContainer"></div>
@@ -42,7 +51,6 @@
             <input type="file" id="fileInput" accept="image/*" />
             Choose Image
           </div>
-          <!-- <button id="shuffleButton">Shuffle</button> -->
           <button id="resetButton">Reset</button>
         </div>
       </div>
@@ -60,21 +68,51 @@
       </div>
     </div>
 
+    <!-- Image Upload Modal -->
+    <div id="imageUploadModal" class="modal">
+      <div class="modal-content">
+        <h2>Image Uploaded!</h2>
+        <p>Image uploaded successfully.</p>
+        <button id="scrollToBoardBtn">Scroll to Board</button>
+      </div>
+    </div>
+
     <!-- Completion Modal -->
     <div id="puzzleCompleteModal" class="modal">
       <div class="modal-content">
         <h2>Sign Mastered!</h2>
         <div id="imgModalContainer"></div>
         <p>
-          Congratulations! you've conquered sign level
+          Congratulations! You've conquered sign level
           <span id="completedLevel"></span>. Mode:
           <span id="completedMode"></span>
         </p>
         <p>Time: <span id="completionTime"></span></p>
         <p>Moves: <span id="completionMoves"></span></p>
-        <button id="nextLevelBtn">Next Sign Challenge</button>
+        <div class="input-section">
+          <label for="pictureOwnerInput">Picture Owner (Optional):</label>
+          <input
+            type="text"
+            id="pictureOwnerInput"
+            placeholder="Enter name of picture owner"
+            aria-label="Picture owner name"
+          />
+        </div>
+        <div class="modal-buttons">
+          <button id="nextLevelBtn">Next Sign Challenge</button>
+          <button id="downloadWinBtn">Download Victory</button>
+          <button id="shareWinBtn">Share Win on X</button>
+        </div>
       </div>
     </div>
+
+    <!-- Audio Elements -->
+    <audio id="moveSound" preload="auto">
+      <source src="assets/move-sound.mp3" type="audio/mp3" />
+    </audio>
+    <audio id="winSound" preload="auto">
+      <source src="assets/win-sound.mp3" type="audio/mp3" />
+    </audio>
 
     <script src="script.js"></script>
   </body>

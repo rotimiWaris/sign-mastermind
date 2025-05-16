@@ -1,83 +1,80 @@
 // ------------------ GAME VARIABLES -------------------
-// These variables keep track of the game state
-let firstSelectedSlice = null; // Stores the first selected puzzle piece
-let moveCount = 0; // Track number of moves made
-let timer; // Timer reference for tracking elapsed time
-let seconds = 0; // Time elapsed in seconds
-let level = 1; // Current game level
-let sliceCount = 3; // Grid size (3x3 for level 1)
-let gameMode = "swap"; // Default to swap mode
-let puzzleArray = []; // For slide mode
-let blankPosition = 0; // For slide mode
+let firstSelectedSlice = null;
+let moveCount = 0;
+let timer;
+let seconds = 0;
+let level = 1;
+let sliceCount = 3;
+let gameMode = "swap";
+let puzzleArray = [];
+let blankPosition = 0;
+let uploadedImageSrc = null; // Store uploaded image source
+let isMuted = false; // Track mute state
 
 // ------------------ EVENT LISTENERS -------------------
-// Listen for level changes
+// Level change
 document.getElementById("levelSelect").addEventListener("change", function (e) {
-  // Update level and grid size based on selected level
   level = parseInt(e.target.value);
-  // Calculate grid size: lvl 1 = 3x3, lvl 2 = 4x4
   sliceCount = 2 + level;
   resetGame();
 });
 
-// Listen for image file selection
+// Image file selection
 document.getElementById("fileInput").addEventListener("change", function (e) {
   const file = e.target.files[0];
-
   if (file) {
     document.getElementById("shareButton").style.display = "none";
-
-    // Read the selected image fike
     const reader = new FileReader();
-
     reader.onload = function (e) {
       const img = new Image();
       img.src = e.target.result;
-
-      // Once image is loaded, slice it into puzzle pieces and start the game
+      uploadedImageSrc = e.target.result; // Store image source
       img.onload = function () {
         initializeGame(img);
-        // sliceAndRandomizeImage(img);
-        // startTimer();
-        // document.getElementById(
-        //   "imageContainer"
-        // ).innerHTML = `<img src="${e.target.result}" style="max-width:100%; height:auto; margin-top:-1rem">`;
+        // Show image upload modal on mobile
+        if (window.innerWidth <= 768) {
+          const modal = document.getElementById("imageUploadModal");
+          modal.style.display = "block";
+        }
       };
     };
-
     reader.readAsDataURL(file);
   }
 });
 
-/**
- * Listen for shuffle button click
- * 
- * document.getElementById("shuffleButton").addEventListener("click", function () {
-  // Get all puzzle pieces and randomize their order
-  const slices = Array.from(document.querySelectorAll(".slice"));
-  shuffleArray(slices);
+// Scroll to Board button
+document.getElementById("scrollToBoardBtn").addEventListener("click", function () {
+  const modal = document.getElementById("imageUploadModal");
+  modal.style.display = "none";
+  document.getElementById("sliceContainer").scrollIntoView({ behavior: "smooth" });
+});
 
-  // Update the display with the new order
-  slices.forEach((slice) =>
-    document.getElementById("sliceContainer").appendChild(slice)
-  );
+// Mute/Unmute button
+document.getElementById("muteButton").addEventListener("click", function () {
+  isMuted = !isMuted;
+  const muteIcon = document.getElementById("muteIcon");
+  if (isMuted) {
+    muteIcon.innerHTML = `
+      <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+      <line x1="23" y1="9" x2="17" y2="15"></line>
+      <line x1="17" y1="9" x2="23" y2="15"></line>
+    `;
+  } else {
+    muteIcon.innerHTML = `
+      <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+    `;
+  }
+});
 
-  // Reset game state
-  moveCount = 0;
-  document.getElementById("moveCount").textContent = moveCount;
-  startTimer();
-}); 
-*/
-
-// Listen for reset button click
+// Reset button
 document.getElementById("resetButton").addEventListener("click", resetGame);
 
-// Listen for "Next Challenge" button clicks in the completion modal
+// Next level button
 document.getElementById("nextLevelBtn").addEventListener("click", function () {
   const modal = document.getElementById("puzzleCompleteModal");
   modal.style.display = "none";
-
-  // Progress to next level if not at next level
   if (level < 6) {
     level++;
     document.getElementById("levelSelect").value = level;
@@ -88,84 +85,77 @@ document.getElementById("nextLevelBtn").addEventListener("click", function () {
   }
 });
 
-// Mode selection buttons
+// Mode selection
 document.querySelectorAll(".mode-btn").forEach((btn) => {
   btn.addEventListener("click", function () {
-    document
-      .querySelectorAll(".mode-btn")
-      .forEach((b) => b.classList.remove("active"));
+    document.querySelectorAll(".mode-btn").forEach((b) => b.classList.remove("active"));
     this.classList.add("active");
     gameMode = this.dataset.value;
     resetGame();
   });
 });
 
-// ------------------ GAME FUNCTIONS -------------------
-// ================== GAME INITIALIZATION ==================
-function initializeGame(img) {
-  document.getElementById(
-    "imageContainer"
-  ).innerHTML = `<img src="${img.src}" style="max-width:100%; height:auto; margin-top:-1rem">`;
+// Download victory image
+document.getElementById("downloadWinBtn").addEventListener("click", downloadVictoryImage);
 
+// Share win on X
+document.getElementById("shareWinBtn").addEventListener("click", function () {
+  const level = document.getElementById("completedLevel").textContent;
+  const mode = document.getElementById("completedMode").textContent;
+  const time = document.getElementById("completionTime").textContent;
+  const moves = document.getElementById("completionMoves").textContent;
+  const owner = document.getElementById("pictureOwnerInput").value.trim();
+  const message = owner
+    ? `🎉 I TRIUMPHANTLY arranged ${owner}'s masterpiece & CRUSHED Sign Mastermind Level ${level} (${mode}) in ${time} with ${moves} moves! 🧩 Dare to beat me? #SignMastermind #PuzzleKing`
+    : `🎉 I CRUSHED Sign Mastermind Level ${level} (${mode}) in ${time} with ${moves} moves! 🧩 Dare to beat me? #SignMastermind #PuzzleKing`;
+  window.open(
+    `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`,
+    "_blank"
+  );
+});
+
+// ------------------ GAME FUNCTIONS -------------------
+function initializeGame(img) {
+  document.getElementById("imageContainer").innerHTML = `<img src="${img.src}" style="max-width:100%; height:auto; margin-top:-1rem">`;
   if (gameMode === "swap") {
     sliceAndRandomizeImage(img);
   } else {
     initializeSlideMode(img);
   }
-
   startTimer();
 }
 
 function initializeSlideMode(img) {
   const sliceContainer = document.getElementById("sliceContainer");
   sliceContainer.innerHTML = "";
-
-  // Create canvas for the full image
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
   const displaySize = 600;
   canvas.width = displaySize;
   canvas.height = displaySize;
   ctx.drawImage(img, 0, 0, displaySize, displaySize);
-
-  // Calculate slice dimensions
   const sliceWidth = canvas.width / sliceCount;
   const sliceHeight = canvas.height / sliceCount;
-
-  // Initialize array for slide mode
   puzzleArray = Array.from({ length: sliceCount * sliceCount }, (_, i) => i);
-
-  // Shuffle the array (Fisher-Yates)
   for (let i = puzzleArray.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [puzzleArray[i], puzzleArray[j]] = [puzzleArray[j], puzzleArray[i]];
   }
-
-  // Set blank position (last piece)
   blankPosition = puzzleArray.indexOf(sliceCount * sliceCount - 1);
-
-  // Create puzzle board
   sliceContainer.style.gridTemplateColumns = `repeat(${sliceCount}, 1fr)`;
-
-  // Store references to all slices
   const slices = [];
-
   for (let i = 0; i < puzzleArray.length; i++) {
     const position = puzzleArray[i];
     const row = Math.floor(position / sliceCount);
     const col = position % sliceCount;
-
     const sliceDiv = document.createElement("div");
     sliceDiv.className = "slice";
     sliceDiv.dataset.index = i;
-
     if (position !== sliceCount * sliceCount - 1) {
-      // Create canvas for each slice
       const sliceCanvas = document.createElement("canvas");
       sliceCanvas.width = sliceWidth;
       sliceCanvas.height = sliceHeight;
       const sliceCtx = sliceCanvas.getContext("2d");
-
       sliceCtx.drawImage(
         canvas,
         col * sliceWidth,
@@ -177,20 +167,15 @@ function initializeSlideMode(img) {
         sliceWidth,
         sliceHeight
       );
-
       const sliceImg = document.createElement("img");
       sliceImg.src = sliceCanvas.toDataURL();
       sliceDiv.appendChild(sliceImg);
     } else {
-      // Blank tile
       sliceDiv.classList.add("blank");
     }
-
     slices.push(sliceDiv);
     sliceContainer.appendChild(sliceDiv);
   }
-
-  // Add single event listener to container (event delegation)
   sliceContainer.addEventListener("click", (e) => {
     const sliceDiv = e.target.closest(".slice:not(.blank)");
     if (sliceDiv) {
@@ -200,58 +185,52 @@ function initializeSlideMode(img) {
   });
 }
 
-// Fix to handleSlideClick
 function handleSlideClick(index) {
   if (gameMode !== "slide") return;
-
   const blankRow = Math.floor(blankPosition / sliceCount);
   const blankCol = blankPosition % sliceCount;
   const clickedRow = Math.floor(index / sliceCount);
   const clickedCol = index % sliceCount;
-
   const isAdjacent =
     (Math.abs(blankRow - clickedRow) === 1 && blankCol === clickedCol) ||
     (Math.abs(blankCol - clickedCol) === 1 && blankRow === clickedRow);
-
   if (!isAdjacent) return;
-
   [puzzleArray[blankPosition], puzzleArray[index]] = [
     puzzleArray[index],
     puzzleArray[blankPosition],
   ];
   blankPosition = index;
-
   moveCount++;
   document.getElementById("moveCount").textContent = moveCount;
-
+  // Play move sound if not muted
+  if (!isMuted) {
+    const moveSound = document.getElementById("moveSound");
+    moveSound.currentTime = 0;
+    moveSound.play();
+  }
   const sliceContainer = document.getElementById("sliceContainer");
   const displaySize = 600;
   const sliceSize = displaySize / sliceCount;
-
   const canvas = document.createElement("canvas");
   canvas.width = displaySize;
   canvas.height = displaySize;
   const ctx = canvas.getContext("2d");
   const img = new Image();
-
   img.onload = () => {
     ctx.drawImage(img, 0, 0, displaySize, displaySize);
     sliceContainer.innerHTML = "";
     sliceContainer.style.position = "relative";
     sliceContainer.style.display = "grid";
     sliceContainer.style.gridTemplateColumns = `repeat(${sliceCount}, 1fr)`;
-
     puzzleArray.forEach((val, i) => {
       const sliceDiv = document.createElement("div");
       sliceDiv.className = "slice";
       sliceDiv.dataset.index = i;
-
       if (val === sliceCount * sliceCount - 1) {
         sliceDiv.classList.add("blank");
       } else {
         const row = Math.floor(val / sliceCount);
         const col = val % sliceCount;
-
         const pieceCanvas = document.createElement("canvas");
         pieceCanvas.width = sliceSize;
         pieceCanvas.height = sliceSize;
@@ -267,177 +246,120 @@ function handleSlideClick(index) {
           sliceSize,
           sliceSize
         );
-
         const imgEl = document.createElement("img");
         imgEl.src = pieceCanvas.toDataURL();
         imgEl.style.width = "100%";
         imgEl.style.height = "100%";
         sliceDiv.appendChild(imgEl);
-
-        // Add animation class
         sliceDiv.classList.add("slide-anim");
         setTimeout(() => {
           sliceDiv.classList.remove("slide-anim");
         }, 300);
       }
-
       sliceContainer.appendChild(sliceDiv);
     });
-
     document.querySelectorAll(".slice:not(.blank)").forEach((el) => {
       el.addEventListener("click", () => {
         const idx = parseInt(el.dataset.index);
         handleSlideClick(idx);
       });
     });
-
     if (checkPuzzleComplete()) {
       setTimeout(() => showPuzzleCompletionModal(), 1000);
     }
   };
-
   img.src = document.querySelector("#imageContainer img").src;
 }
 
-/**
- * Slices the image into pieces and randomizes their positions
- * parse {image} image - The image to slice into puzzle pieces
- */
 function sliceAndRandomizeImage(image) {
-  // Get the container for puzzle pieces
   const sliceContainer = document.getElementById("sliceContainer");
-  sliceContainer.innerHTML = ""; // Clear previous puzzle pieces
-
-  // Create a temporary canvas to work with the image
+  sliceContainer.innerHTML = "";
   const canvas = document.createElement("canvas");
   const ctx = canvas.getContext("2d");
-
-  const displaySize = 600; // Fixed size for the displayed image
-
+  const displaySize = 600;
   canvas.width = displaySize;
   canvas.height = displaySize;
-
-  // Draw the image onto the canvas, scaling it to our fixed size
   ctx.drawImage(image, 0, 0, displaySize, displaySize);
-
-  const slices = []; // Array to hold all puzzle pieces
-
-  //   Calculate dimensions of each puzzle piece
+  const slices = [];
   const sliceWidth = canvas.width / sliceCount;
   const sliceHeight = canvas.height / sliceCount;
-
-  // Create Individual puzzle pieces
   for (let row = 0; row < sliceCount; row++) {
     for (let col = 0; col < sliceCount; col++) {
-      // Create a canvas for each puzzle piece
       const sliceCanvas = document.createElement("canvas");
       const sliceCtx = sliceCanvas.getContext("2d");
       sliceCanvas.width = sliceWidth;
       sliceCanvas.height = sliceHeight;
-
-      // Draw the corresponding portion of the original Image
       sliceCtx.drawImage(
         canvas,
         col * sliceWidth,
         row * sliceHeight,
         sliceWidth,
-        sliceHeight, // source rectangle
+        sliceHeight,
         0,
         0,
         sliceWidth,
-        sliceHeight // destination rectangle
+        sliceHeight
       );
-
-      // Create an Image from the slice canvas
       const sliceImg = document.createElement("img");
       sliceImg.src = sliceCanvas.toDataURL();
-
-      // Crete the div element that will contain the image
       const sliceDiv = document.createElement("div");
       sliceDiv.className = "slice";
       sliceDiv.appendChild(sliceImg);
-
-      // Store original position data (this is how we know if pieces are in correct spots)
       sliceDiv.dataset.row = row;
       sliceDiv.dataset.col = col;
-
-      // Add click event to the slice
       sliceDiv.addEventListener("click", function () {
         onSliceClick(sliceDiv);
       });
-
       slices.push(sliceDiv);
     }
   }
-
-  // Randomize the order of slices
   shuffleArray(slices);
-
-  // Add all puzzle pieces to the container
   slices.forEach((slice) => {
     sliceContainer.appendChild(slice);
   });
-
-  // Update the grid layout based on the current level
   sliceContainer.style.gridTemplateColumns = `repeat(${sliceCount}, 1fr)`;
-
-  // Reset the move count
   moveCount = 0;
   document.getElementById("moveCount").textContent = moveCount;
 }
 
-/**
- * Shuffle array elements randomly (fisher-Yates algo)
- * @param {Array} array - The array to shuffle
- */
-
 function shuffleArray(array) {
   let j, temp;
-  j = temp = 0;
   for (let i = array.length - 1; i > 0; i--) {
     j = Math.floor(Math.random() * (i + 1));
-    // Swap element i and j
     temp = array[j];
     array[j] = array[i];
     array[i] = temp;
-
-    /**
-     * ANOTHER WAY TO SWAP
-     * [array[i], array[j]] = [array[j], array[i]];
-     */
   }
 }
 
-/**
- * Handles click element on puzzle pieces
- * @param {HTMLElement} slice - The clicked puzzle piece
- */
 function onSliceClick(slice) {
-  // if no piece is currently selected, select this one
   if (firstSelectedSlice === null) {
     firstSelectedSlice = slice;
-    slice.classList.add("selected"); // Highlight the selected piece
+    slice.classList.add("selected");
+    // Play move sound if not muted
+    if (!isMuted) {
+      const moveSound = document.getElementById("moveSound");
+      moveSound.currentTime = 0;
+      moveSound.play();
+    }
   } else {
-    // If a piece is already selected, swap it with the current one
     const secondSelectedSlice = slice;
-
-    // Don't count clicking the same piece twice as a move
     if (firstSelectedSlice === secondSelectedSlice) {
       firstSelectedSlice.classList.remove("selected");
       firstSelectedSlice = null;
       return;
     }
-
-    // Swap the two selected pieces
     swapSlices(firstSelectedSlice, secondSelectedSlice);
     firstSelectedSlice.classList.remove("selected");
     firstSelectedSlice = null;
-
-    // Increment move counter and update display
     moveCount++;
     document.getElementById("moveCount").textContent = moveCount;
-
-    // Check if puzzle is complete after the swap
+    // Play move sound if not muted
+    if (!isMuted) {
+      const moveSound = document.getElementById("moveSound");
+      moveSound.currentTime = 0;
+      moveSound.play();
+    }
     if (checkPuzzleComplete()) {
       setTimeout(() => {
         showPuzzleCompletionModal();
@@ -445,10 +367,6 @@ function onSliceClick(slice) {
     }
   }
 }
-
-/**
- * Checks if the puzzle is completed (all pieces in correct position)
- */
 
 function checkPuzzleComplete() {
   if (gameMode === "swap") {
@@ -462,7 +380,6 @@ function checkPuzzleComplete() {
     }
     return true;
   } else {
-    // For slide mode, check if array is in order except last element
     for (let i = 0; i < puzzleArray.length - 1; i++) {
       if (puzzleArray[i] !== i) return false;
     }
@@ -470,80 +387,51 @@ function checkPuzzleComplete() {
   }
 }
 
-/**
- * Swaps two puzzle pieces with animation
- * @param {HTMLElement} slice1 - First puzzle piece
- * @param {HTMLElement} slice2 - Second puzzle piece
- */
-
 function swapSlices(slice1, slice2) {
-  // Add animation class
   slice1.classList.add("swapping");
   slice2.classList.add("swapping");
-
-  // Get parent and position references
   const parent = slice1.parentNode;
   const sibling = slice1.nextSibling === slice2 ? slice1 : slice1.nextSibling;
-
-  // Swap the DOM elements
   slice2.parentNode.insertBefore(slice1, slice2);
   parent.insertBefore(slice2, sibling);
-
-  // Remove animation class after animation completes
   setTimeout(() => {
     slice1.classList.remove("swapping");
     slice2.classList.remove("swapping");
   }, 600);
 }
 
-/* Starts the game timer */
 function startTimer() {
-  stopTimer(); // clear any existing timer
+  stopTimer();
   seconds = 0;
   timer = setInterval(updateTimer, 1000);
 }
 
-/* Stops the game timer */
 function stopTimer() {
   clearInterval(timer);
 }
 
-/* Update the timer display every second */
 function updateTimer() {
   seconds++;
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor(seconds / 60);
   const remainingSeconds = seconds % 60;
-
-  // Format time as HH:MM:SS
   document.getElementById("timer").textContent =
     `${hours.toString().padStart(2, "0")}:` +
     `${minutes.toString().padStart(2, "0")}:` +
     `${remainingSeconds.toString().padStart(2, "0")}`;
 }
 
-/**
- * Show the completion modal with stats
- */
-
 function showPuzzleCompletionModal() {
   const modal = document.getElementById("puzzleCompleteModal");
-
   const fileInput = document.getElementById("fileInput");
-
   if (fileInput.files.length > 0) {
     const file = fileInput.files[0];
     const reader = new FileReader();
-
     reader.onload = function (e) {
       const img = new Image();
       img.src = e.target.result;
-
-      // Once image is loaded, slice it into puzzle pieces and start the game
       img.onload = function () {
-        document.getElementById(
-          "imgModalContainer"
-        ).innerHTML = `<img src="${e.target.result}" style="max-width:100%; height:auto;">`;
+        document.getElementById("imgModalContainer").innerHTML = `<img src="${e.target.result}" style="max-width:100%; height:auto;">`;
       };
     };
     reader.readAsDataURL(file);
@@ -554,39 +442,215 @@ function showPuzzleCompletionModal() {
   document.getElementById("completionTime").textContent =
     document.getElementById("timer").textContent;
   document.getElementById("completionMoves").textContent = moveCount;
-
+  // Reset picture owner input
+  document.getElementById("pictureOwnerInput").value = "";
   modal.style.display = "block";
+  // Play win sound if not muted
+  if (!isMuted) {
+    const winSound = document.getElementById("winSound");
+    winSound.currentTime = 0;
+    winSound.play();
+  }
 }
 
-/**
- * Reset the game state
- */
+function downloadVictoryImage() {
+  const canvas = document.createElement("canvas");
+  canvas.width = 800;
+  canvas.height = 1000;
+  const ctx = canvas.getContext("2d");
+
+  // Background: Dark gradient for text visibility
+  const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+  gradient.addColorStop(0, "#4a1c00"); // --card-bg
+  gradient.addColorStop(1, "#330d00"); // --background-color
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Orange slice icons in top corners (reduced opacity)
+  ctx.fillStyle = "rgba(255, 140, 0, 0.8)"; // Deep orange, semi-transparent
+  ctx.beginPath();
+  ctx.arc(50, 50, 30, 0, Math.PI / 2);
+  ctx.lineTo(50, 50);
+  ctx.fill();
+  ctx.beginPath();
+  ctx.arc(canvas.width - 50, 50, 30, Math.PI / 2, Math.PI);
+  ctx.lineTo(canvas.width - 50, 50);
+  ctx.fill();
+
+  // Decorative orange line above header
+  ctx.strokeStyle = "rgba(255, 69, 0, 0.8)"; // Neon orange, semi-transparent
+  ctx.lineWidth = 5;
+  ctx.beginPath();
+  ctx.moveTo(50, 90);
+  ctx.lineTo(canvas.width - 50, 90);
+  ctx.stroke();
+
+  // Header: SIGN MASTERMIND
+  ctx.font = "bold 50px Orbitron";
+  ctx.fillStyle = "#fffacd"; // --text-color (light orange)
+  ctx.textAlign = "center";
+  ctx.shadowColor = "#ff4500"; // Neon orange
+  ctx.shadowBlur = 15;
+  ctx.fillText("SIGN MASTERMIND", canvas.width / 2, 120);
+  ctx.shadowBlur = 0;
+
+  // Success message (letter style, without puzzle details)
+  const owner = document.getElementById("pictureOwnerInput").value.trim();
+  const message = owner
+  ? `Wow... Orange Fam, I SUCCESSFULLY arranged ${owner}'s masterpiece, claiming victory!`
+  : `Wow... Orange Fam, I CRUSHED the puzzle, claiming victory!`;
+
+ctx.textAlign = "center"; // Center the text horizontally
+const textX = canvas.width / 2; // Center point of canvas
+let textY = 160;
+const maxWidth = canvas.width - 200;
+const lineHeight = 32;
+
+  // Wrap text for the message
+  const words = message.split(" ");
+  let line = "";
+  const lines = [];
+  for (let word of words) {
+    const testLine = line + word + " ";
+    const metrics = ctx.measureText(testLine);
+    if (metrics.width > maxWidth && line !== "") {
+      lines.push(line);
+      line = word + " ";
+    } else {
+      line = testLine;
+    }
+  }
+  lines.push(line);
+
+  // Render message
+  let currentX = textX;
+  ctx.font = "bold 24px Poppins";
+  ctx.fillStyle = "#fffacd"; // --text-color
+  for (let line of lines) {
+    ctx.fillText(line, currentX, textY);
+    textY += lineHeight;
+  }
+
+  // Load and draw the arranged image
+  const img = new Image();
+  img.src = uploadedImageSrc;
+  img.onload = () => {
+    const imgWidth = 330;
+    const imgHeight = 330;
+    const imgX = (canvas.width - imgWidth) / 2;
+    const imgY = textY + 30;
+    ctx.fillStyle = "#fffacd"; // --text-color
+    ctx.fillRect(imgX - 15, imgY - 15, imgWidth + 30, imgHeight + 30);
+    ctx.drawImage(img, imgX, imgY, imgWidth, imgHeight);
+    // Double orange border
+    ctx.strokeStyle = "rgba(255, 69, 0, 0.8)"; // Neon orange, semi-transparent
+    ctx.lineWidth = 5;
+    ctx.strokeRect(imgX - 15, imgY - 15, imgWidth + 30, imgHeight + 30);
+    ctx.strokeStyle = "rgba(255, 140, 0, 0.8)"; // Deep orange, semi-transparent
+    ctx.lineWidth = 3;
+    ctx.strokeRect(imgX - 10, imgY - 10, imgWidth + 20, imgHeight + 20);
+
+    // Bottom text: You can try it too!
+    ctx.font = "bold 20px Poppins";
+    ctx.fillStyle = "#fffacd"; // --text-color
+    ctx.textAlign = "center";
+    const bottomTextY = imgY + imgHeight + 40;
+    ctx.fillText("You can try it too!", canvas.width / 2, bottomTextY);
+
+    // Puzzle details table
+    const tableY = bottomTextY + 30;
+    const tableWidth = 600;
+    const tableHeight = 60;
+    const tableX = (canvas.width - tableWidth) / 2;
+    const cellWidth = tableWidth / 4;
+    const cellHeight = tableHeight / 2;
+
+    // Table background
+    ctx.fillStyle = "#191914"; // --text-color
+    ctx.fillRect(tableX, tableY, tableWidth, tableHeight);
+
+    // Table borders
+    ctx.strokeStyle = "#ff4500"; // Neon orange
+    ctx.lineWidth = 2;
+    ctx.strokeRect(tableX, tableY, tableWidth, tableHeight);
+    ctx.beginPath();
+    for (let i = 1; i < 4; i++) {
+      ctx.moveTo(tableX + i * cellWidth, tableY);
+      ctx.lineTo(tableX + i * cellWidth, tableY + tableHeight);
+    }
+    ctx.moveTo(tableX, tableY + cellHeight);
+    ctx.lineTo(tableX + tableWidth, tableY + cellHeight);
+    ctx.stroke();
+
+    // Table content
+    const completedLevel = document.getElementById("completedLevel").textContent;
+    const completedMode = document.getElementById("completedMode").textContent;
+    const completionTime = document.getElementById("completionTime").textContent;
+    const completionMoves = document.getElementById("completionMoves").textContent;
+
+    const labels = ["Level", "Mode", "Time", "Moves"];
+    const values = [completedLevel, completedMode, completionTime, completionMoves];
+
+    ctx.textAlign = "center";
+    ctx.fillStyle = "#ffd700"; // Light orange
+    ctx.font = "bold 18px Poppins";
+    for (let i = 0; i < 4; i++) {
+      ctx.fillText(labels[i], tableX + (i + 0.5) * cellWidth, tableY + cellHeight / 2 + 6);
+    }
+    ctx.fillStyle = "#ff8c00"; // Deep orange
+    ctx.font = "900 28px Poppins";
+    for (let i = 0; i < 4; i++) {
+      ctx.fillText(values[i], tableX + (i + 0.5) * cellWidth, tableY + cellHeight + cellHeight / 2 + 6);
+    }
+
+    // Decorative orange line below table
+    ctx.strokeStyle = "rgba(255, 69, 0, 0.8)"; // Neon orange, semi-transparent
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.moveTo(50, tableY + tableHeight + 20);
+    ctx.lineTo(canvas.width - 50, tableY + tableHeight + 20);
+    ctx.stroke();
+
+    // Footer: ORANGE DYNASTY
+    ctx.font = "bold 40px Orbitron";
+    ctx.fillStyle = "#fffacd"; // --text-color
+    ctx.shadowColor = "#ff4500"; // Neon orange
+    ctx.shadowBlur = 15;
+    ctx.fillText("ORANGE DYNASTY", canvas.width / 2, tableY + tableHeight + 60);
+    ctx.shadowBlur = 0;
+
+    // Download the image
+    canvas.toBlob((blob) => {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `SignMastermind_Level${level}_Win.png`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }, "image/png");
+  };
+}
 
 function resetGame() {
-  // If an image has been selected, re-slice it
   const fileInput = document.getElementById("fileInput");
-
   if (fileInput.files.length > 0) {
     const file = fileInput.files[0];
     const reader = new FileReader();
-
     reader.onload = function (e) {
       const img = new Image();
       img.src = e.target.result;
-
-      // Once image is loaded, slice it into puzzle pieces and start the game
       img.onload = function () {
         initializeGame(img);
       };
     };
     reader.readAsDataURL(file);
   }
-
-  // Update level display
   document.getElementById("level").textContent = level;
   moveCount = 0;
   document.getElementById("moveCount").textContent = moveCount;
 }
 
-// Initialize the game when page loads
+// Initialize game
 resetGame();
