@@ -115,8 +115,8 @@ document.getElementById("shareWinBtn").addEventListener("click", function () {
   const moves = document.getElementById("completionMoves").textContent;
   const owner = document.getElementById("pictureOwnerInput").value.trim();
   const message = owner
-    ? `🎉 I TRIUMPHANTLY arranged ${owner}'s masterpiece & CRUSHED @sign Mastermind Level ${level} (${mode}) in ${time} with ${moves} moves! 🧩 Dare to beat me? #SignMastermind #PuzzleKing`
-    : `🎉 I CRUSHED @sign Mastermind Level ${level} (${mode}) in ${time} with ${moves} moves! 🧩 Dare to beat me? #SignMastermind #PuzzleKing`;
+    ? `🎉 I TRIUMPHANTLY arranged ${owner}'s masterpiece & CRUSHED @sign Mastermind Level ${level} (${mode}) in ${time} with ${moves} moves! 🧩 Dare to beat me? https://sign-mastermind.vercel.app #SignMastermind #PuzzleKing`
+    : `🎉 I CRUSHED @sign Mastermind Level ${level} (${mode}) in ${time} with ${moves} moves! 🧩 Dare to beat me? https://sign-mastermind.vercel.app #SignMastermind #PuzzleKing`;
   window.open(
     `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`,
     "_blank"
