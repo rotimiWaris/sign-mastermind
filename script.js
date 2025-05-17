@@ -123,6 +123,28 @@ document.getElementById("shareWinBtn").addEventListener("click", function () {
   );
 });
 
+// Copy Win Text
+document.getElementById("copyWinBtn").addEventListener("click", function () {
+  const level = document.getElementById("completedLevel").textContent;
+  const mode = document.getElementById("completedMode").textContent;
+  const time = document.getElementById("completionTime").textContent;
+  const moves = document.getElementById("completionMoves").textContent;
+  const owner = document.getElementById("pictureOwnerInput").value.trim();
+
+  const message = owner
+    ? `🎉 I TRIUMPHANTLY arranged ${owner}'s masterpiece & CRUSHED @sign Mastermind Level ${level} (${mode}) in ${time} with ${moves} moves! 🧩 Dare to beat me? https://sign-mastermind.vercel.app #SignMastermind #PuzzleKing`
+    : `🎉 I CRUSHED @sign Mastermind Level ${level} (${mode}) in ${time} with ${moves} moves! 🧩 Dare to beat me? https://sign-mastermind.vercel.app #SignMastermind #PuzzleKing`;
+
+  // Copy to clipboard
+  navigator.clipboard.writeText(message).then(() => {
+    const confirm = document.getElementById("copyConfirm");
+    confirm.style.display = "block";
+    setTimeout(() => {
+      confirm.style.display = "none";
+    }, 3000);
+  });
+});
+
 // ------------------ GAME FUNCTIONS -------------------
 function initializeGame(img) {
   document.getElementById(
