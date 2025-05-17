@@ -5,6 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Puzzle Game</title>
     <link
+      rel="shortcut icon"
+      href="assets/favicon/favicon.ico"
+      type="image/x-icon"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="assets/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="assets/favicon/favicon-16x16.png"
+    />
+    <link rel="manifest" href="assets/favicon/site.webmanifest" />
+    <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
     />
@@ -12,15 +35,6 @@
   </head>
   <body>
     <div class="game-container">
-      <!-- Mute/Unmute Button -->
-      <button id="muteButton" class="mute-button" aria-label="Toggle sound">
-        <svg id="muteIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
-          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
-        </svg>
-      </button>
-
       <div class="sidebar">
         <h1>Sign Mastermind</h1>
         <div id="imageContainer"></div>
@@ -57,9 +71,28 @@
 
       <!-- Puzzle Container -->
       <div class="puzzle-section">
+        <!-- Mute/Unmute Button -->
+        <button id="muteButton" class="mute-button" aria-label="Toggle sound">
+          <svg
+            id="muteIcon"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--text-color)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+          </svg>
+        </button>
         <button
           id="shareButton"
-          onclick="window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent('Check out this awesome puzzle game I\'m playing! I challenge @____ 🧩 Try it yourself:'), '_blank')"
+          onclick="window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent('Check out this awesome @sign Mastermind I\'m playing! 🧩 I challenge @____ to arrange my signed profile on any mode selected, level 1! https://sign-mastermind.vercel.app'), '_blank')"
           style="margin-bottom: 1rem"
         >
           Share on X
