@@ -3,7 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Puzzle Game</title>
+    <title>Sign Mastermind</title>
+    <link
+      rel="shortcut icon"
+      href="assets/favicon/favicon.ico"
+      type="image/x-icon"
+    />
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="assets/favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="assets/favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="assets/favicon/favicon-16x16.png"
+    />
+    <link rel="manifest" href="assets/favicon/site.webmanifest" />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
@@ -12,15 +35,6 @@
   </head>
   <body>
     <div class="game-container">
-      <!-- Mute/Unmute Button -->
-      <button id="muteButton" class="mute-button" aria-label="Toggle sound">
-        <svg id="muteIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--text-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
-          <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-          <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
-        </svg>
-      </button>
-
       <div class="sidebar">
         <h1>Sign Mastermind</h1>
         <div id="imageContainer"></div>
@@ -31,6 +45,10 @@
         </div>
 
         <div class="controls-section">
+          <div class="file-input-wrapper">
+            <input type="file" id="fileInput" accept="image/*" />
+            Choose Image
+          </div>
           <select id="levelSelect">
             <option value="1">Level 1 (3x3)</option>
             <option value="2">Level 2 (4x4)</option>
@@ -47,23 +65,48 @@
               <input type="hidden" id="modeSelect" value="swap" />
             </div>
           </div>
-          <div class="file-input-wrapper">
-            <input type="file" id="fileInput" accept="image/*" />
-            Choose Image
-          </div>
           <button id="resetButton">Reset</button>
+          <button id="howToPlayButton">How to Play</button>
         </div>
       </div>
 
       <!-- Puzzle Container -->
       <div class="puzzle-section">
-        <button
-          id="shareButton"
-          onclick="window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent('Check out this awesome puzzle game I\'m playing! I challenge @____ 🧩 Try it yourself:'), '_blank')"
-          style="margin-bottom: 1rem"
-        >
-          Share on X
+        <!-- Mute/Unmute Button -->
+        <button id="muteButton" class="mute-button" aria-label="Toggle sound">
+          <svg
+            id="muteIcon"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="var(--text-color)"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+            <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+          </svg>
         </button>
+
+        <div id="shareButton">
+          <button
+            onclick="window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent('siGM! 🧡💸 Check out this awesome @sign Mastermind I\'m playing! 🧩 I challenge @____ to arrange my signed profile on any mode selected, level 1! https://sign-mastermind.vercel.app'), '_blank')"
+            style="margin-bottom: 1rem"
+          >
+            Share on X
+          </button>
+          <a
+            href="https://x.com/PrinceWarexy/status/1923756729608659130"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <button style="margin-bottom: 1rem">Meet The Creators</button>
+          </a>
+        </div>
         <div id="sliceContainer"></div>
       </div>
     </div>
@@ -102,6 +145,50 @@
           <button id="nextLevelBtn">Next Sign Challenge</button>
           <button id="downloadWinBtn">Download Victory</button>
           <button id="shareWinBtn">Share Win on X</button>
+          <button id="copyWinBtn">Copy Win Text</button>
+          <p id="copyConfirm">
+            ✅ Message copied! Share it on X with your downloaded victory card.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- How to Play Modal -->
+    <div id="howToPlayModal" class="modal">
+      <div class="modal-content">
+        <h2>How to Play Sign Mastermind</h2>
+        <p>Welcome to Sign Mastermind, a fun and challenging puzzle game where you arrange image tiles to complete a masterpiece!</p>
+        <h3>1. Getting Started</h3>
+        <p>- <strong>Choose an Image</strong>: Click the "Choose Image" button to upload an image from your device. This image will be split into tiles for the puzzle.</p>
+        <p>- <strong>Select a Level</strong>: Use the dropdown to choose a level (1 to 6). Higher levels increase the grid size (3x3 to 8x8), making the puzzle more challenging.</p>
+        <p>- <strong>Pick a Mode</strong>: Choose between "Swap" or "Slide" mode using the buttons provided.</p>
+        <h3>2. Playing in Swap Mode</h3>
+        <p>- Click a tile to select it (it will highlight).</p>
+        <p>- Click another tile to swap their positions.</p>
+        <p>- Continue swapping tiles until the image is correctly arranged, matching the original image shown in the sidebar.</p>
+        <p>- The goal is to place each tile in its correct position with as few moves and less time as possible.</p>
+        <h3>3. Playing in Slide Mode</h3>
+        <p>- The puzzle includes a blank tile (invisible space).</p>
+        <p>- Click a tile adjacent to the blank tile (up, down, left, or right) to slide it into the blank space.</p>
+        <p>- Continue sliding tiles to rearrange the image until it matches the original.</p>
+        <p>- The goal is to restore the image with minimal moves and time.</p>
+        <h3>4. Game Controls</h3>
+        <p>- <strong>Timer and Moves</strong>: The timer starts when the game begins and tracks your time. The move counter tracks how many swaps or slides you make.</p>
+        <p>- <strong>Mute/Unmute</strong>: Toggle sound effects using the speaker icon in the puzzle area.</p>
+        <p>- <strong>Reset</strong>: Click the "Reset" button to shuffle the tiles and restart the current level.</p>
+        <p>- <strong>How to Play</strong>: This modal provides these instructions anytime you need a refresher!</p>
+        <h3>5. Winning the Game</h3>
+        <p>- When you complete the puzzle, a victory modal appears showing your time, moves, level, and mode.</p>
+        <p>- Enter the picture owner’s name (optional) to personalize your win.</p>
+        <p>- Share your victory on X, copy a win message, or download a victory image to celebrate!</p>
+        <p>- Click "Next Sign Challenge" to advance to the next level (up to Level 6).</p>
+        <h3>Tips</h3>
+        <p>- Plan your moves to minimize the number of swaps or slides.</p>
+        <p>- Use the original image in the sidebar as a reference.</p>
+        <p>- Experiment with both modes to find your favorite way to play!</p>
+        <p>Have fun and become a Sign Mastermind! Close this modal to start playing.</p>
+        <div class="modal-buttons">
+          <button id="closeHowToPlayBtn">Close</button>
         </div>
       </div>
     </div>

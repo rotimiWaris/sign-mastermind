@@ -24,6 +24,7 @@ document.getElementById("fileInput").addEventListener("change", function (e) {
   const file = e.target.files[0];
   if (file) {
     document.getElementById("shareButton").style.display = "none";
+    document.getElementById("muteButton").style.display = "block";
     const reader = new FileReader();
     reader.onload = function (e) {
       const img = new Image();
@@ -43,11 +44,15 @@ document.getElementById("fileInput").addEventListener("change", function (e) {
 });
 
 // Scroll to Board button
-document.getElementById("scrollToBoardBtn").addEventListener("click", function () {
-  const modal = document.getElementById("imageUploadModal");
-  modal.style.display = "none";
-  document.getElementById("sliceContainer").scrollIntoView({ behavior: "smooth" });
-});
+document
+  .getElementById("scrollToBoardBtn")
+  .addEventListener("click", function () {
+    const modal = document.getElementById("imageUploadModal");
+    modal.style.display = "none";
+    document
+      .getElementById("muteButton")
+      .scrollIntoView({ behavior: "smooth" });
+  });
 
 // Mute/Unmute button
 document.getElementById("muteButton").addEventListener("click", function () {
@@ -88,7 +93,9 @@ document.getElementById("nextLevelBtn").addEventListener("click", function () {
 // Mode selection
 document.querySelectorAll(".mode-btn").forEach((btn) => {
   btn.addEventListener("click", function () {
-    document.querySelectorAll(".mode-btn").forEach((b) => b.classList.remove("active"));
+    document
+      .querySelectorAll(".mode-btn")
+      .forEach((b) => b.classList.remove("active"));
     this.classList.add("active");
     gameMode = this.dataset.value;
     resetGame();
@@ -96,7 +103,9 @@ document.querySelectorAll(".mode-btn").forEach((btn) => {
 });
 
 // Download victory image
-document.getElementById("downloadWinBtn").addEventListener("click", downloadVictoryImage);
+document
+  .getElementById("downloadWinBtn")
+  .addEventListener("click", downloadVictoryImage);
 
 // Share win on X
 document.getElementById("shareWinBtn").addEventListener("click", function () {
@@ -106,17 +115,41 @@ document.getElementById("shareWinBtn").addEventListener("click", function () {
   const moves = document.getElementById("completionMoves").textContent;
   const owner = document.getElementById("pictureOwnerInput").value.trim();
   const message = owner
-    ? `🎉 I TRIUMPHANTLY arranged ${owner}'s masterpiece & CRUSHED Sign Mastermind Level ${level} (${mode}) in ${time} with ${moves} moves! 🧩 Dare to beat me? #SignMastermind #PuzzleKing`
-    : `🎉 I CRUSHED Sign Mastermind Level ${level} (${mode}) in ${time} with ${moves} moves! 🧩 Dare to beat me? #SignMastermind #PuzzleKing`;
+    ? `🎉 I TRIUMPHANTLY arranged ${owner}'s masterpiece & CRUSHED @sign Mastermind Level ${level} (${mode}) in ${time} with ${moves} moves! 🧩 Dare to beat me? https://sign-mastermind.vercel.app #SignMastermind #PuzzleKing`
+    : `🎉 I CRUSHED @sign Mastermind Level ${level} (${mode}) in ${time} with ${moves} moves! 🧩 Dare to beat me? https://sign-mastermind.vercel.app #SignMastermind #PuzzleKing`;
   window.open(
     `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}`,
     "_blank"
   );
 });
 
+// Copy Win Text
+document.getElementById("copyWinBtn").addEventListener("click", function () {
+  const level = document.getElementById("completedLevel").textContent;
+  const mode = document.getElementById("completedMode").textContent;
+  const time = document.getElementById("completionTime").textContent;
+  const moves = document.getElementById("completionMoves").textContent;
+  const owner = document.getElementById("pictureOwnerInput").value.trim();
+
+  const message = owner
+    ? `🎉 I TRIUMPHANTLY arranged ${owner}'s masterpiece & CRUSHED @sign Mastermind Level ${level} (${mode}) in ${time} with ${moves} moves! 🧩 Dare to beat me? https://sign-mastermind.vercel.app #SignMastermind #PuzzleKing`
+    : `🎉 I CRUSHED @sign Mastermind Level ${level} (${mode}) in ${time} with ${moves} moves! 🧩 Dare to beat me? https://sign-mastermind.vercel.app #SignMastermind #PuzzleKing`;
+
+  // Copy to clipboard
+  navigator.clipboard.writeText(message).then(() => {
+    const confirm = document.getElementById("copyConfirm");
+    confirm.style.display = "block";
+    setTimeout(() => {
+      confirm.style.display = "none";
+    }, 3000);
+  });
+});
+
 // ------------------ GAME FUNCTIONS -------------------
 function initializeGame(img) {
-  document.getElementById("imageContainer").innerHTML = `<img src="${img.src}" style="max-width:100%; height:auto; margin-top:-1rem">`;
+  document.getElementById(
+    "imageContainer"
+  ).innerHTML = `<img src="${img.src}" style="max-width:100%; height:auto; margin-top:-1rem">`;
   if (gameMode === "swap") {
     sliceAndRandomizeImage(img);
   } else {
@@ -431,7 +464,9 @@ function showPuzzleCompletionModal() {
       const img = new Image();
       img.src = e.target.result;
       img.onload = function () {
-        document.getElementById("imgModalContainer").innerHTML = `<img src="${e.target.result}" style="max-width:100%; height:auto;">`;
+        document.getElementById(
+          "imgModalContainer"
+        ).innerHTML = `<img src="${e.target.result}" style="max-width:100%; height:auto;">`;
       };
     };
     reader.readAsDataURL(file);
@@ -497,14 +532,14 @@ function downloadVictoryImage() {
   // Success message (letter style, without puzzle details)
   const owner = document.getElementById("pictureOwnerInput").value.trim();
   const message = owner
-  ? `Wow... Orange Fam, I SUCCESSFULLY arranged ${owner}'s masterpiece, claiming victory!`
-  : `Wow... Orange Fam, I CRUSHED the puzzle, claiming victory!`;
+    ? `Wow... Orange Fam, I SUCCESSFULLY arranged ${owner}'s masterpiece, claiming victory!`
+    : `Wow... Orange Fam, I CRUSHED the puzzle, claiming victory!`;
 
-ctx.textAlign = "center"; // Center the text horizontally
-const textX = canvas.width / 2; // Center point of canvas
-let textY = 160;
-const maxWidth = canvas.width - 200;
-const lineHeight = 32;
+  ctx.textAlign = "center"; // Center the text horizontally
+  const textX = canvas.width / 2; // Center point of canvas
+  let textY = 160;
+  const maxWidth = canvas.width - 200;
+  const lineHeight = 32;
 
   // Wrap text for the message
   const words = message.split(" ");
@@ -535,6 +570,8 @@ const lineHeight = 32;
   const img = new Image();
   img.src = uploadedImageSrc;
   img.onload = () => {
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
     const imgWidth = 330;
     const imgHeight = 330;
     const imgX = (canvas.width - imgWidth) / 2;
@@ -583,24 +620,40 @@ const lineHeight = 32;
     ctx.stroke();
 
     // Table content
-    const completedLevel = document.getElementById("completedLevel").textContent;
+    const completedLevel =
+      document.getElementById("completedLevel").textContent;
     const completedMode = document.getElementById("completedMode").textContent;
-    const completionTime = document.getElementById("completionTime").textContent;
-    const completionMoves = document.getElementById("completionMoves").textContent;
+    const completionTime =
+      document.getElementById("completionTime").textContent;
+    const completionMoves =
+      document.getElementById("completionMoves").textContent;
 
     const labels = ["Level", "Mode", "Time", "Moves"];
-    const values = [completedLevel, completedMode, completionTime, completionMoves];
+    const values = [
+      completedLevel,
+      completedMode,
+      completionTime,
+      completionMoves,
+    ];
 
     ctx.textAlign = "center";
     ctx.fillStyle = "#ffd700"; // Light orange
     ctx.font = "bold 18px Poppins";
     for (let i = 0; i < 4; i++) {
-      ctx.fillText(labels[i], tableX + (i + 0.5) * cellWidth, tableY + cellHeight / 2 + 6);
+      ctx.fillText(
+        labels[i],
+        tableX + (i + 0.5) * cellWidth,
+        tableY + cellHeight / 2 + 6
+      );
     }
     ctx.fillStyle = "#ff8c00"; // Deep orange
     ctx.font = "900 28px Poppins";
     for (let i = 0; i < 4; i++) {
-      ctx.fillText(values[i], tableX + (i + 0.5) * cellWidth, tableY + cellHeight + cellHeight / 2 + 6);
+      ctx.fillText(
+        values[i],
+        tableX + (i + 0.5) * cellWidth,
+        tableY + cellHeight + cellHeight / 2 + 6
+      );
     }
 
     // Decorative orange line below table
@@ -651,6 +704,17 @@ function resetGame() {
   moveCount = 0;
   document.getElementById("moveCount").textContent = moveCount;
 }
+// Add event listener for How to Play button
+document.getElementById("howToPlayButton").addEventListener("click", function () {
+  const modal = document.getElementById("howToPlayModal");
+  modal.style.display = "block";
+});
+
+// Add event listener for Close button in How to Play modal
+document.getElementById("closeHowToPlayBtn").addEventListener("click", function () {
+  const modal = document.getElementById("howToPlayModal");
+  modal.style.display = "none";
+});
 
 // Initialize game
 resetGame();
