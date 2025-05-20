@@ -704,6 +704,17 @@ function resetGame() {
   moveCount = 0;
   document.getElementById("moveCount").textContent = moveCount;
 }
+// Add event listener for How to Play button
+document.getElementById("howToPlayButton").addEventListener("click", function () {
+  const modal = document.getElementById("howToPlayModal");
+  modal.style.display = "block";
+});
+
+// Add event listener for Close button in How to Play modal
+document.getElementById("closeHowToPlayBtn").addEventListener("click", function () {
+  const modal = document.getElementById("howToPlayModal");
+  modal.style.display = "none";
+});
 
 // Initialize game
 resetGame();
